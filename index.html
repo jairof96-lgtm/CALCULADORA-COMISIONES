@@ -3,44 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sistema Jairo Flores - Gestión y Eficiencia</title>
+    <title>Gestión Jairo Flores - TOTAL</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
-        .card { background: white; border-radius: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
-        .btn-factor { border: 2px solid #e2e8f0; transition: all 0.2s; }
-        .btn-factor.active { border-color: #4f46e5; background-color: #4f46e5; color: white; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
+        body { font-family: sans-serif; background-color: #f1f5f9; }
+        .card { background: white; border-radius: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .btn-active { background-color: #4f46e5 !important; color: white !important; border-color: #4338ca !important; transform: scale(1.05); }
     </style>
 </head>
 <body class="p-4 pb-20">
     <div class="max-w-md mx-auto space-y-4">
         
-        <div class="bg-slate-900 p-8 rounded-[2.5rem] text-white shadow-2xl text-center">
-            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Comisión de Gestión Total</p>
-            <h1 id="comision-final" class="text-5xl font-black mb-2 text-indigo-400">L 0.00</h1>
-            <div id="status-label" class="text-[9px] font-bold bg-white/10 py-1 px-4 rounded-full inline-block uppercase tracking-tighter">Esperando Datos...</div>
+        <div class="bg-slate-900 p-8 rounded-[2rem] text-white shadow-2xl text-center">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">Comisión Total de Gestión</p>
+            <h1 id="comision-final" class="text-5xl font-black mb-2 text-emerald-400">L 0.00</h1>
+            <div id="status-label" class="text-[10px] font-bold bg-white/10 py-1 px-4 rounded-full inline-block uppercase tracking-tighter border border-white/20 text-slate-300">Seleccione Categoría</div>
         </div>
 
-        <div class="card p-6">
-            <label class="block text-[11px] font-black text-slate-500 uppercase mb-3 ml-1">Selecciona Categoría (Gestión)</label>
+        <div class="card p-5">
+            <label class="block text-[11px] font-black text-slate-500 uppercase mb-3 text-center">Factor de Comisión (Gestión)</label>
             <div class="grid grid-cols-3 gap-3">
-                <button onclick="setFactor('A')" id="btnA" class="btn-factor p-4 rounded-2xl font-black text-slate-400 bg-slate-50">A</button>
-                <button onclick="setFactor('B')" id="btnB" class="btn-factor p-4 rounded-2xl font-black text-slate-400 bg-slate-50">B</button>
-                <button onclick="setFactor('C')" id="btnC" class="btn-factor p-4 rounded-2xl font-black text-slate-400 bg-slate-50">C</button>
+                <button type="button" onclick="seleccionarFactor('A')" id="btnA" class="p-4 rounded-2xl font-black text-slate-500 bg-white border-2 border-slate-100 shadow-sm transition-all">A</button>
+                <button type="button" onclick="seleccionarFactor('B')" id="btnB" class="p-4 rounded-2xl font-black text-slate-500 bg-white border-2 border-slate-100 shadow-sm transition-all">B</button>
+                <button type="button" onclick="seleccionarFactor('C')" id="btnC" class="p-4 rounded-2xl font-black text-slate-500 bg-white border-2 border-slate-100 shadow-sm transition-all">C</button>
             </div>
         </div>
 
-        <div class="card p-6">
-            <label class="block text-[11px] font-black text-slate-500 uppercase mb-3 ml-1">Recaudación Semanal (L)</label>
-            <input type="number" id="recaudacion" oninput="procesarTodo()" placeholder="L 0.00" 
-                class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl p-4 text-xl font-bold text-slate-800 outline-none focus:border-indigo-500">
+        <div class="card p-5">
+            <label class="block text-[11px] font-black text-slate-500 uppercase mb-2">Recaudación Semana Actual (L)</label>
+            <input type="number" id="recaudacion" oninput="procesar()" placeholder="0.00" class="w-full bg-slate-50 border-2 border-slate-200 rounded-xl p-4 text-2xl font-bold text-slate-800 outline-none focus:border-indigo-500">
         </div>
 
-        <div class="card p-5 bg-indigo-50/50 border-indigo-100">
-            <p class="text-[10px] font-black text-indigo-700 uppercase mb-3 flex items-center gap-2">
-                <span>📊</span> Meta Semana 4 (Para Tasa Máxima)
-            </p>
-            <div id="meta-container" class="bg-white p-4 rounded-2xl text-center border border-indigo-100 shadow-sm">
+        <div class="card p-5">
+            <div class="flex justify-between items-center mb-3">
+                <label class="text-[11px] font-black text-slate-500 uppercase">Eficiencia (4 Semanas)</label>
+                <span id="promedio-display" class="bg-indigo-600 text-white px-3 py-1 rounded-full text-[10px] font-bold">Promedio: 0%</span>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div class="space-y-1">
+                    <p class="text-[9px] font-bold text-slate-400 ml-1">Semana 1</p>
+                    <input type="number" id="s1" oninput="procesar()" placeholder="0%" class="w-full bg-slate-50 border-2 border-slate-100 rounded-xl p-3 font-bold text-center">
+                </div>
+                <div class="space-y-1">
+                    <p class="text-[9px] font-bold text-slate-400 ml-1">Semana 2</p>
+                    <input type="number" id="s2" oninput="procesar()" placeholder="0%" class="w-full bg-slate-50 border-2 border-slate-100 rounded-xl p-3 font-bold text-center">
+                </div>
+                <div class="space-y-1">
+                    <p class="text-[9px] font-bold text-slate-400 ml-1">Semana 3</p>
+                    <input type="number" id="s3" oninput="procesar()" placeholder="0%" class="w-full bg-slate-50 border-2 border-slate-100 rounded-xl p-3 font-bold text-center">
+                </div>
+                <div class="space-y-1">
+                    <p class="text-[9px] font-black text-indigo-600 ml-1">Semana 4 (Hoy)</p>
+                    <input type="number" id="s4" oninput="procesar()" placeholder="0%" class="w-full bg-white border-2 border-indigo-400 rounded-xl p-3 font-bold text-center text-indigo-600 shadow-sm">
+                </div>
+            </div>
+        </div>
+
+        <div class="card p-5 bg-indigo-50 border-indigo-100">
+            <p class="text-[10px] font-black text-indigo-700 uppercase mb-2 flex items-center gap-1">📊 Meta necesaria Sem 4</p>
+            <div class="bg-white p-4 rounded-xl text-center border border-indigo-200">
                 <p id="meta-valor" class="text-2xl font-black text-slate-800">-- %</p>
-                <p class="text-[9px] text-slate-400 uppercase font-
+                <p class="text-[9px] text-slate-400 font-bold uppercase mt-1">Para alcanzar Tasa Máxima (>76%)</p>
+            </div>
+        </div>
+
+        <button onclick="if(confirm('¿Borrar todo?')){localStorage.clear();location.reload();}" class="w-full text-slate-400 font-bold py-2 text-[10px] uppercase tracking-widest">Reiniciar sistema</button>
+    </div>
+
+    <script>
+        let factorGlobal = '';
+
+        window.onload = function() {
+            // Cargar recaudación y semanas
+            ['recaudacion', 's1', 's2', 's3',
