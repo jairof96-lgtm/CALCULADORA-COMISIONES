@@ -8,9 +8,10 @@
     <style>
         body { font-family: sans-serif; background-color: #f8fafc; }
         .card { background: white; border-radius: 2rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
     </style>
 </head>
-<body class="p-4 pb-10">
+<body class="p-4 pb-20">
     <div class="max-w-md mx-auto space-y-4">
         
         <div class="bg-slate-900 p-8 rounded-[2.5rem] text-white text-center shadow-2xl">
@@ -20,4 +21,78 @@
         </div>
 
         <div class="card p-6">
-            <label class="block text-[11px] font-black text-slate-500 uppercase
+            <label class="block text-[11px] font-black text-slate-500 uppercase mb-3 ml-1 tracking-wider">
+                1. Recaudación Semanal (L)
+            </label>
+            <input type="number" id="recaudacion" oninput="calcularYGuardar()" placeholder="L 0.00" 
+                class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl p-4 text-xl font-bold text-slate-800 outline-none focus:border-indigo-500 transition-all">
+        </div>
+
+        <div class="card p-6">
+            <label class="block text-[11px] font-black text-slate-500 uppercase mb-3 ml-1 tracking-wider">
+                2. Factor de Comisión (A, B o C)
+            </label>
+            <div class="grid grid-cols-3 gap-2">
+                <button onclick="setFactor('A')" id="btnA" class="p-4 rounded-xl font-black border-2 border-slate-100 bg-slate-50 text-slate-400">A</button>
+                <button onclick="setFactor('B')" id="btnB" class="p-4 rounded-xl font-black border-2 border-slate-100 bg-slate-50 text-slate-400">B</button>
+                <button onclick="setFactor('C')" id="btnC" class="p-4 rounded-xl font-black border-2 border-slate-100 bg-slate-50 text-slate-400">C</button>
+            </div>
+        </div>
+
+        <div class="card p-6">
+            <label class="block text-[11px] font-black text-slate-500 uppercase mb-3 ml-1 tracking-wider">
+                3. Porcentaje de Cumplimiento (%)
+            </label>
+            <input type="number" id="cumplimiento" oninput="calcularYGuardar()" placeholder="Ejemplo: 94.50" 
+                class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl p-4 text-xl font-bold text-slate-800 outline-none focus:border-indigo-500 transition-all">
+        </div>
+
+        <div class="card p-6 border-l-8 border-indigo-500">
+            <div class="flex justify-between items-center mb-4">
+                <label class="text-[11px] font-black text-slate-500 uppercase tracking-wider">4. Eficiencia (4 Semanas %)</label>
+                <span id="promedio-display" class="bg-indigo-100 text-indigo-700 px-2 py-1 rounded-lg text-xs font-black">PROM: 0%</span>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <input type="number" id="s1" oninput="calcularYGuardar()" placeholder="Sem 1" class="bg-slate-50 border-2 border-slate-100 rounded-xl p-3 font-bold text-center outline-none focus:border-indigo-500">
+                <input type="number" id="s2" oninput="calcularYGuardar()" placeholder="Sem 2" class="bg-slate-50 border-2 border-slate-100 rounded-xl p-3 font-bold text-center outline-none focus:border-indigo-500">
+                <input type="number" id="s3" oninput="calcularYGuardar()" placeholder="Sem 3" class="bg-slate-50 border-2 border-slate-100 rounded-xl p-3 font-bold text-center outline-none focus:border-indigo-500">
+                <input type="number" id="s4" oninput="calcularYGuardar()" placeholder="Sem 4" class="bg-white border-2 border-indigo-500 rounded-xl p-3 font-bold text-center text-indigo-600 outline-none">
+            </div>
+            <div class="mt-4 p-3 bg-slate-50 rounded-xl text-center border border-dashed border-slate-300">
+                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Meta en Sem 4 para Tasa Máxima:</p>
+                <p id="meta-valor" class="text-xl font-black text-indigo-600">-- %</p>
+            </div>
+        </div>
+
+        <div class="space-y-2">
+            <button onclick="calcularYGuardar()" class="w-full bg-indigo-600 text-white font-black py-5 rounded-[2rem] shadow-lg active:scale-95 transition-all text-lg uppercase">
+                Calcular y Guardar
+            </button>
+            <button onclick="borrarDatos()" class="w-full text-slate-400 font-bold py-2 text-xs uppercase tracking-widest">
+                Borrar memoria de la App
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        let factorSeleccionado = '';
+
+        window.onload = function() {
+            if(localStorage.getItem('recaudacion')) {
+                document.getElementById('recaudacion').value = localStorage.getItem('recaudacion');
+                document.getElementById('cumplimiento').value = localStorage.getItem('cumplimiento');
+                document.getElementById('s1').value = localStorage.getItem('s1') || '';
+                document.getElementById('s2').value = localStorage.getItem('s2') || '';
+                document.getElementById('s3').value = localStorage.getItem('s3') || '';
+                document.getElementById('s4').value = localStorage.getItem('s4') || '';
+                setFactor(localStorage.getItem('factor'));
+                calcularYGuardar();
+            }
+        }
+
+        function setFactor(f) {
+            if(!f) return;
+            factorSeleccionado = f;
+            localStorage.setItem('factor', f);
+            ['A', 'B
